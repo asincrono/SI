@@ -1,0 +1,65 @@
+Logic base AI
+
+Modern approach to AI
+Russell Norvig
+
+Aproximación basada en un lenguaje de programación.
+
+El condicional con variables booleanas "IF A = 1 THEN B = 1"
+Si "A = 0" no se ejecuta nada. 
+La sintaxis se reduciría a "B <- A" ó 
+"C <- A, B, D"
+Equivalente a "IF (B=1) AND (D=1) AND (A=1) THEN C = 1" 
+
+A ← # equivale a “A=1”
+
+El resultado de ejecutar es el valor de sus variables.
+En nuestro caso imprimiremos las variables que valgan 1 (las variables solo pueden
+tomar 1 o 0 como valor.
+
+Sea:
+A <-
+B <- A
+C <- B
+
+Así, el resultado de este programa sería {A, B, C}
+
+En este lenguaje no tendremos en cuenta el orden.
+
+B <- A.
+C <- B. 
+A <- .
+
+Devolvería {A, B, C}.
+
+Interpretaremos cada sentencia como de obligado cumplimiento, cada sentencia es equivalente a una fórmula. Todas las fórmulas han de tenerse en cuenta. Todas las sentencias se tienen que cumplir con el conjunto de variables alcanzado (¿múltiples iteraciones?)
+
+Para lograr esto podremos:
+1.- Probar todos los órdenes y selecionar el "mejor".
+2.- Realimentar el programa con los datos obtenidos de la primera iteración. Iterar hasta alcanzar un equilibrio (los valores no cambian). Iterar hasta que el resultado sea estable: Iterate Until Stable.
+
+¿Probar todos los órdenes equivaldría a obtener lo que deseamos, que no influya el orden?
+Del mismo modo, ¿iterar hasta alcanzar estabilidad, supondría lograr la independencia del orden?
+
+En ambos casos, ¿obtendríamos el mismo resultado?
+
+NOTA: Una vez una variable vale uno no puede perder este valor.
+
+El primer algoritmo es independiente del orden. Su complejidad sería exponencial. El segundo algoritmo dependería del nº de variables (se iteraría, como máximo, tantas veces cómo variables).
+
+El de iteración, supondría "buscar" el orden ideal.
+
+¿Habría una forma más rápida de obtener la solución ideal?
+
+1.- Ejecutamos las sentencias de asignación.
+2.- Borramos las que hemos obtenido.
+3.- Ejecutamos las sentencias de asignación generadas.
+4.- Condición de fin es que no se hayan generado asignaciones nuevas.
+
+Chaining (Encadenado).
+
+Iterar hasta estable -> fix point algorithm (punto fijo).
+
+Chaining & fix point = sintácticos.
+
+Algoritmo de todos los órdenes -> semántico (pues parte de la propia definción de "no importar el orden" = ejecutar todos los órdenes).
