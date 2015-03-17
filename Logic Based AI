@@ -63,3 +63,343 @@ Iterar hasta estable -> fix point algorithm (punto fijo).
 Chaining & fix point = sintácticos.
 
 Algoritmo de todos los órdenes -> semántico (pues parte de la propia definción de "no importar el orden" = ejecutar todos los órdenes).
+
+Algoritmos:
+- All order.
+- Until stable.
+- Chainning.
+- Top-down.
+
+Añadidos:
+b <- c,d.
+b<-c.
+b<-d. (or)
+Dependiente del parser.
+
+b11 <- c10
+Dependiente del parser.
+
+b(10) <- c(11)
+Similar al caso anterior pero aplicando significado.
+b "vale" 10 si c "vale" 11.
+NOTA: b puede tener varios valores simultáneos.
+
+Necesitamos añadir:
+1.- La estructura de datos "infinito"
+2.- La recursión.
+
+Recursión:
+(Los añadidos se harán a nivel del parser).
+Añadimos el "significado" b(11,2) b "vale" el par (11, 2).
+Añadimos un nuevo significado
+s(0,1) <- indica que al 0 le sigue el 1.
+diríamos que (0, 1) es un par valor de "s" y s será "siguiente".
+
+p(1,0) <-
+p(2,1) <- 
+p(3,2) <- 
+
+a "p" ahora le llamaremos "previo" y el par significará
+que: el previo de 1 será 0.
+
+p(X,Y) <- s(Y,X).
+
+A encontar una mayúscula (X, Y, etc.) se substituirá por cualquier otro valor del programa.
+
+b(X) :- c(X)
+c(3) :- 
+
+devolverá 
+c(3), b(3).
+
+Tendremos que añadir una tabla de valores (elementos entre paréntesis)
+
+Y sustituir la "X" pro dichos valores.
+
+
+b(X) :- c(X)
+c(3) :- 
+
+Se transformaría en:
+
+b(3) :- c(3)
+c(3) :-
+
+Si añadimos b(4) :- 
+
+b(X) :- c(X)
+c(3) :- 
+b(4) :-
+e(2) :- 
+
+Desplegamos b(X) :- c(X) para los valores (3, 4, 2)
+b(2) :- c(2)
+b(4) :- c(4)
+b(3) :- c(3)
+
+c(3) :- 
+b(4) :- 
+e(2) :- 
+
+para la expresión c(1,2) se guardarían los varlores 1 y 2.
+
+Esta substitución por todos los valores definidos en el programa se denomino "grounding" (o "grinding" que se lió).
+
+p(X,Y) :- s(Y,X)
+s(0,1) :-
+
+---
+
+s(0,1), p(1,0)
+
+p(Y,X) y s(X,Y) se interpretarán como funciones.
+
+
+Ejemplo:
+add(X,Y,Z) :- add(X,T,M), s(Y,T), s(Z,M)
+add(X,0,X) :- // fin de la recursión.
+
+Definición de la suma recursiva.
+"Siendo" add suma y s sucesor.
+
+int add(x,y) {
+   
+   if (y == 0) {
+   return x
+   } else {
+   z = (add (x, y - 1) + 1);
+   }
+}
+
+Algoritmo top-down:
+add(2,1,Z)? ---> Preguntaría por Z.
+Evitaremos grounding.
+
+Sabiendo la pregunta.
+Miramos las sentencias que tienen add (suma).
+Substituimos lo que tenemos (plantilla) por lo que hay.
+Si no es posible, se descarta.
+
+En nuestro ejemplo bloqueamos X=2 e Y=1
+En las substituciones se irán "bloqueando" el resto.
+
+: 
+
+s(0,1) :-
+s(1,2) :-
+...
+s(4,5) :-
+
+add(X,Y,Z) :- add(X,T,M),s(T,Y),s(M,Z)
+add(X,0,X) :-
+
+La ejecución será similar a la de c.
+
+
+Para obtener la resta haríamos la pregunta
+add(2,X,3)?
+
+qué hay que restarle a 3 para obtener un 2.
+
+Nomenclatura:
+Programa = teoría.
+a(X) :- ---> a = predicado,
+a(X) :- ---> es un átomo (será verdadero o falso).
+
+add(X,Y,Z) :- s(...) ---> fórmula.
+
+La indecibilidad del razonamiento lógico.
+
+
+Extensiones:
+
+Extesión 1: b;c <- a. // Al menos, uno de los dos (b o c) vale 1. No hay seguridad.
+
+Extesión 2:
+if (!a) b = 1;
+
+b :- not a
+
+Facilita el lenguaje, intentamos de este modo evitar la recursión. Pero no añade capacidades al lenguage.
+
+Aumenta las capacidades sintácticas pero no añaden capacidad de representación al lenguaje.
+
+Al añadir las extensiónes 1 y 2 los algoritmos dejan de ser válidos.
+
+Extensión 1:
+b;c <- a.
+
+Tendremos tres posibilidades de conjuntos de salida.
+m <- h.
+b;c <- a.
+a.
+----------
+{a, b}
+{a, c}
+{a, b, c}
+// lo único seguro sería:
+{a} 1; {b, c} ?; {m, h} 0
+a es 1, no sabemos de b y c; y m y h son 0
+
+1ª aproximación, coger solo una, por ejemplo solo "b".
+Bifurcaremos dos o más veces cada vez que encontramos b;c;... <- ...
+
+Creando conjuntos independientes de variables.
+
+Podemos poner en el programa sentencias que no son completamente ejecutivas (que no se pueden ejecutar aunque aportan información). Programas con información parcial.
+
+Extensión 2: b <- not a.
+Al carecer de orden, esta sentencia es muy difícil de tratar.
+b <- not a.
+------------
+el stable y la ejecunción en c funcionan.
+
+Chaining saca 0 porque no hay ninguna sentencia de asinganción. (no tenemos ningún átómo). Chaining empieza a partir de los átomos y los propaga. Ahora tendrá que "empezar" también por los "not".
+Debería propagar los "not ..." que se quedan únicos en las sentencias se eleminana (genrando nuevos átomos).
+Caining va borrando/simplificando las sentencias según vamos obteniendo nuevos átomos.
+
+Top-down b? tampoco saca nada. 
+Cuando tiene un "not 2" debe comprobar si no hay ninguna asignación a "a". No debe haber ningún átomo con "a".
+
+b <- not a.
+a <- c.
+
+Tendríamos que comprobar que no hay ningún "a".
+Nos obligaría a comprobar que tampoco hay "c".
+
+b <- not a.
+a <- not b.
+
+Nunca sería estable ya que no tenemos orden.
+
+Ejecución en C -> {b}
+
+Stable saca también {b}
+
+Cambiando el orden:
+a <- not b
+b <- not a
+
+Stable saca {a}.
+
+Pasaría a importar el orden.
+
+All order daría {a} en un orden y {b} en otro.
+Y dependería del orden.
+All order depende de la ejecución en C, secuencial.
+
+¿Qué queremos que signifique?
+a <- not b
+b <- not a
+Dos soluciones válidas.
+
+Si añadimos:
+d <- a; b.
+a <- not a.
+b <- not b.
+
+{d} siempre debe salir.
+
+Posibilidad 1: {a}    {d}
+Posibilidad 2: {b}    {d}
+Posibilidad 3: {a, b} {d}
+
+Funciona como la extensión 1 (disyunción).
+
+Modificación de los algoritmos: deben generar varios conjuntos de soluciones. Varias posibilidades.
+
+Posibilidad de abrir bifurcaciones.
+
+Nuevo algoritmo:
+Algoritmo semántico (semantics).
+No voy a ejecutar las sentencias.
+
+a <- not b.
+b <- not a.
+
+dos variables "a" y "b".
+a b
+----
+0 0 {}
+0 1 {b}
+1 0 {a}
+1 1 {a, b}
+
+Posibles resultados del programa. Utilizamos las sentencias para descartar soluciones.
+
+Deuvelve los conjuntos de resultados que son posibles:
+{a} {b} {a, b}
+
+Implícitamente no depende del orden.
+
+Modificación: podemos rechazar que los dos valgan 1.
+
+Ahora podemos detectar si un programa no tiene sentido (no tiene solución válida alguna).
+
+La complejidad será 2^<número de variables> = es exponencial.
+
+No se ha encontrado ningún algoritmo mejor que sea capaz de resolver dichos programas SAT NP vs. P.
+
+Podemos optimizar las sentencias que no estén implicadas en not (utilizanos los algoritmos previos).
+
+
+Conjunto de fórmulas (sentencias) = teoría (NO TEOREMA).
+las variables se llaman átomos.
+
+las "soluciones" son interpretaciones que son modelos de ese programa.
+
+modelo es una interpretación que verifica todas las fórmulas de la teoría.
+
+Lo que es cierto SEGURO de un programa se denomina "conclusiones de la teoría".
+
+La intersección de todos los modelos.
+m <- c.
+d <- a.
+d <- b.
+a <- not b.
+b <- not c.
+
+conclusiones : {m, c} 0, {d} 1.
+
+Si añadimos más sentencias podemos sacar más conclusiones. Nunca perdemos CONCLUSIONES. Monótono.
+
+Ahora el semántico es el que determina la corrección de cualquier otro algoritmo.
+
+stable models eliminas los "superconjuntos" de las soluciones.
+Stable model semantics.
+Answer-set-programming.
+
+
+Dos primeros temas (siguiendo las notas ¿notación? del libro).
+Vimos "Part III Knowledge and Reasoning" y "Part V Learning".
+
+Veremos ahora "Part II Problem Solving"
+
+
+Búsqueda informada (heurísticas):
+
+Tenemos información para elegir por qué lineas empezar, aunque se iría igualmente por todos los caminos. Exploramos primero las ramas por las que parece que se encuentra la solución.
+Si podemos establecer una eurística, aceleramos la búsqueda.
+
+La mejor primero:
+gready: Baja en profundidad lo que resultes más cerca según la heurística.
+
+A* search: Usar h (la función heurística) directamente no es ideal. g será una función que nos indica cuanto hemos invertido hasta el momento. Ahora, la función que se evalua será f(n) = h(n) + g(n). Debemos mantener todos los nodos estudiados en memoria. Si en un momento dado, la f que alcanzamos es mayor que la de un nodo pendiente, volveríamos a dicho nodo y abandonaríamos el camino actual.
+
+Debe cumplirse que h sea adminsible.
+Una heurística es admisible si h(n) < r(n) donde r(n) es el coste real para llegar al objetivo. 
+Que h sea >= 0 y que h(G) = 0 (G = objetivo).
+
+A* tiene las propiedades de primero en anchura (tiempo y espacio) pero será más rápido.
+
+Una heurística DOMINA a otra siempre que para todo nodo/estado tiene mayor valor que la otra. La mayor representará aquella en la que se han eliminado "menos" restricciones del problema.
+(Una heurística trivial sería h(n) = 0, pero no aporta nada.)
+
+hill climbing: otra técnica.
+
+Se elegirá en profundidad o anchura dependiendo de por donde nos pilla el infinito. 
+Si tenemos heurística A* 
+
+Cuando una heurística no domina a otra, podemos obtener una que domine a ambas tomando el máximo de ambas.
+
+(Siguiente prueba dos horas antes del examen).

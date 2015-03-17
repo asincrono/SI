@@ -105,15 +105,16 @@ process.stdin.on("end", function () {
 			// begin debug log.
 			console.log("we are at i = " + i + "\n");
 			console.log("remaining sentences = " + numSentences + "\n");
-			console.log("currrent sentence = " + sentences[i].toString());
-			console.log("rtLength = " + sentences[i].rtLenght() + "\n");
+
+			//console.log("curent sentence = " + sentences[i].toString());
+			//console.log("rtLength = " + sentences[i].rtLenght() + "\n");
 			// end debug log.
 
 			if (sentences[i].rtLenght() === 0) {
 				currentOutput.push(sentences[i].lt);
 				// begin debug log.
-				console.log("added sentence: " + sentences[i].toString());
-				console.log("current output: " + currentOutput.toString() + "\n");
+				//console.log("added sentence: " + sentences[i].toString());
+				//console.log("current output: " + currentOutput.toString() + "\n");
 				// end debug log.
 				sentences.splice(i, 1);
 				numSentences -= 1;
@@ -122,15 +123,15 @@ process.stdin.on("end", function () {
 				} else {
                break;
             }
-         } elseif (currentOutput.indexOf(sentences[i].lt) >= 0) {
+         } else if (currentOutput.indexOf(sentences[i].lt) >= 0) {
             sentences.splice(i, 1);
          } else {
 				sentences[i].test(currentOutput);
 				if (sentences[i].rtLenght() === 0) {
 					currentOutput.push(sentences[i].lt);
 					// begin debug log.
-					console.log("added sentence: " + sentences[i].toString());
-					console.log("current output: " + currentOutput.toString() + "\n");
+					//console.log("added sentence: " + sentences[i].toString());
+					//console.log("current output: " + currentOutput.toString() + "\n");
 					// end debug log.
 					sentences.splice(i, 1);
 					numSentences -= 1;
